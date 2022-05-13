@@ -13,41 +13,27 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    BroadcastReceiver internetReceiver=new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //tao ra doi tuong connectiManager
-            ConnectivityManager connectivityManager= (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-            //kiem tra co internet hay khong
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if(networkInfo!=null)
-            {
-                Toast.makeText(MainActivity.this, "Co internet", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-
-                Toast.makeText(MainActivity.this, "Khong co internet", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
+    private MyBroadcastInternet myBroadcastInternet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myBroadcastInternet= new MyBroadcastInternet();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        //lang nghe su thay doi cua internet
-        IntentFilter filter=new IntentFilter(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
-        registerReceiver(internetReceiver,filter);
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(myBroadcastInternet,intentFilter);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(internetReceiver);
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(myBroadcastInternet);
     }
 }
